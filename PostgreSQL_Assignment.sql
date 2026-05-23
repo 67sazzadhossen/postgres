@@ -72,11 +72,14 @@ CREATE Table orders (
 TRUNCATE TABLE orders RESTART IDENTITY CASCADE;
 
 
+
 insert into orders (customer_id,book_id,quantity)
 VALUES
-(2,3,4),
-(1,7,5),
-(1,2,3)
+(2,20,4)
+
+
+SELECT * FROM orders
+
 
 --1️⃣ Find books that are out of stock.
 
@@ -89,4 +92,38 @@ SELECT  * FROM books
 ORDER BY price DESC
 LIMIT 1
 
+--3️⃣ Find the total number of orders placed by each customer.
 
+SELECT
+    c.name,
+    COUNT(o.id) AS total_orders
+FROM orders o
+JOIN customers c
+ON o.customer_id = c.id
+GROUP BY c.id;
+
+--4️⃣ Calculate the total revenue generated from book sales.
+SELECT b.price*
+o.quantity as total_revenue
+FROM books b
+JOIN orders o
+ON b.id = o.book_id
+
+SELECT sum(b.price*o.quantity)as total_revenue
+FROM books b
+JOIN orders o
+ON b.id = o.book_id
+
+
+--5️⃣ List all customers who have placed more than one order.
+SELECT
+    c.name,
+    COUNT(o.id) AS total_orders
+FROM orders o
+JOIN customers c
+ON o.customer_id = c.id
+GROUP BY c.id
+HAVING count(o.id)>1
+
+--6️⃣ Find the average price of books in the store.
+SELECT ROUND(AVG(price), 2) AS avg_book_price FROM books
